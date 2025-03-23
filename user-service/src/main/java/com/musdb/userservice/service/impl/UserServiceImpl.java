@@ -10,8 +10,12 @@ import com.musdb.userservice.model.*;
 import com.musdb.userservice.repository.UserCredentialRepository;
 import com.musdb.userservice.repository.UserFollowerRepository;
 import com.musdb.userservice.repository.UserRepository;
+import com.musdb.userservice.security.JwtService;
 import com.musdb.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +29,22 @@ public class UserServiceImpl implements UserService {
     private final UserCredentialRepository userCredentialRepository;
     private final UserFollowerRepository userFollowerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            UserCredentialRepository userCredentialRepository,
                            UserFollowerRepository userFollowerRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           AuthenticationManager authenticationManager,
+                           JwtService jwtService) {
         this.userRepository = userRepository;
         this.userCredentialRepository = userCredentialRepository;
         this.userFollowerRepository = userFollowerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -67,11 +77,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDto loginUser(LoginRequestDto loginRequest) {
-        // This will be implemented with JWT authentication
-        // For now, just returning a dummy response
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
+
+        UserCredential userCredential = userCredentialRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Username not found"));
+
+        User user = userCredential.getUser();
+
+        String token = jwtService.generateToken(
+                loginRequest.getUsername(),
+                user.getUserId(),
+                user.getUserType().name()
+        );
+
+        UserDto userDto = mapToDto(user);
+
         return LoginResponseDto.builder()
-                .token("dummy-token")
-                .user(new UserDto())
+                .token(token)
+                .user(userDto)
                 .build();
     }
 
