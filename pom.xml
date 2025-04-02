@@ -11,7 +11,7 @@
 
     <modules>
         <module>user-service</module>
-        <!-- Diğer modüller eklendiğinde buraya eklenecek -->
+        <module>photo-service</module>
     </modules>
 
     <properties>
