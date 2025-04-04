@@ -23,6 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+//TODO: Validasyonlar servisten ayrılıp validation klasörü oluşturulup oradan olarak çekilsin.
+//TODO: @RequiredArgsConstructor kullanılabilir.
+//TODO: Auth servisi buradan ayrılacak.
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -46,6 +50,8 @@ public class UserServiceImpl implements UserService {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
+
+    //TODO: Entity DTO set işlemleri MApper ile yapılacka.
 
     @Override
     @Transactional
@@ -180,6 +186,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+
+    //TODO: Dönüş tipi değiştirilebilir.
     @Override
     @Transactional
     public boolean followUser(Long userId, Long followingUserId) {
@@ -259,6 +267,8 @@ public class UserServiceImpl implements UserService {
 
         return userFollowerRepository.countByUserAndIsStillFollowingTrue(user);
     }
+
+    //TODO: kaldırılıp mappera taşınacak.
 
     // Helper method to map User entity to UserDto
     private UserDto mapToDto(User user) {

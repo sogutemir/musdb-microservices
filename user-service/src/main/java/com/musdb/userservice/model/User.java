@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+//TODO: Builder anotasyonu kullanılıp map edstruct kullanılarak DTO'ya dönüştürülmeli
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

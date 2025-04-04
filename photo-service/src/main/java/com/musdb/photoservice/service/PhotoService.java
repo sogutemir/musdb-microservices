@@ -5,6 +5,7 @@ import com.musdb.photoservice.dto.PhotoUploadDto;
 
 import java.util.List;
 
+//TODO: Query ile Command servisleri birbirinden ayrılmalıdır
 public interface PhotoService {
     PhotoDto uploadPhoto(PhotoUploadDto photoUploadDto);
 

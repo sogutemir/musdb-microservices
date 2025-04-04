@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+//TODO: Repo sorguları @Query ile desteklenmeli (Hepsinde değil.)
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUserType(UserType userType);
